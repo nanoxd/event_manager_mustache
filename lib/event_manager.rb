@@ -1,4 +1,7 @@
 require 'csv'
+require 'sunlight/congress'
+
+Sunlight::Congress.api_key = 'e179a6973728c4dd3fb1204283aaccb5'
 puts "EventManager Initialized"
 
 def clean_zipcode(zipcode)
@@ -11,5 +14,12 @@ contents.each do |row|
 
   zipcode = clean_zipcode(row[:zipcode])
 
-  puts "#{name} #{zipcode}"
+  legislators = Sunlight::Congress::Legislator.by_zipcode(zipcode)
+
+  legislator_names = legislators.collect do |legislator|
+    "#{legislator.first_name} #{legislator.last_name} "
+  end
+
+  legislators_string = legislator_names.join(", ")
+  puts "#{name} #{zipcode} #{legislators_string}"
 end
